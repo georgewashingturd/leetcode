@@ -31,3 +31,6 @@ class Solution(object):
             if (i > 0):
                 d.remove(prices[i])
         return p
+        
+# another very clever solution is to use Kadane's algorithm which is an algorithm to find the max subarray of an array with positive and negative numbers
+# I also have an algorithm to do that although it's not as fancy as Kadane's
