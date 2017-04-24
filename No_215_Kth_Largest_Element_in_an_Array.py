@@ -1,26 +1,8 @@
 ###############################################################################
 # 215. Kth Largest Element in an Array
 ###############################################################################
-
-class Solution(object):
-    def findKthLargest(self, nums, k):
-        """
-        :type nums: List[int]
-        :type k: int
-        :rtype: int
-        """
-        
-        if (not nums):
-            return -1
-            
-        #nums.sort(reverse=True)
-        nums.sort()
-        
-        #return nums[k-1]
-        return nums[-k]
-        
-        
-# But we should do something cleverer one of them is to use something called a quick select
+     
+# We should do something cleverer one of them is to use something called a quick select
 # which is a modified wuick sort
 
 # The basic idea is to use Quick Select algorithm to partition the array with pivot:
@@ -38,32 +20,72 @@ class Solution(object):
 
 # Quick Select Solution Code:
 
-# public int findKthLargest(int[] nums, int k) {
-	# if (nums == null || nums.length == 0) return Integer.MAX_VALUE;
-    # return findKthLargest(nums, 0, nums.length - 1, nums.length - k);
-# }    
+class Solution(object):
+    def quickSelect(self, nums, k, st, ed):
+        
+        pivot = st
+        
+        
+        for i in range(st+1, ed):
+            if (nums[i] > nums[pivot]):
+                # put nums[i] at the left of pivot in two steps
+                # swap nums[i] to just to the right of pivot
+                # and then swap pivot to its immediate neighbor to the right
+                if (i != pivot + 1):
+                    nums[pivot+1], nums[i] = nums[i], nums[pivot+1]
 
-# public int findKthLargest(int[] nums, int start, int end, int k) {// quick select: kth smallest
-	# if (start > end) return Integer.MAX_VALUE;
-	
-	# int pivot = nums[end];// Take A[end] as the pivot, 
-	# int left = start;
-	# for (int i = start; i < end; i++) {
-		# if (nums[i] <= pivot) // Put numbers < pivot to pivot's left
-			# swap(nums, left++, i);			
-	# }
-	# swap(nums, left, end);// Finally, swap A[end] with A[left]
-	
-	# if (left == k)// Found kth smallest number
-		# return nums[left];
-	# else if (left < k)// Check right part
-		# return findKthLargest(nums, left + 1, end, k);
-	# else // Check left part
-		# return findKthLargest(nums, start, left - 1, k);
-# } 
+                nums[pivot+1], nums[pivot] = nums[pivot], nums[pivot+1]
+                
+                # and don't forget to update the pivot itself as it has moved to the right
+                pivot = pivot+1
+                #print nums
 
-# void swap(int[] A, int i, int j) {
-	# int tmp = A[i];
-	# A[i] = A[j];
-	# A[j] = tmp;				
-# }        
+
+        #print nums
+        #input('+++')
+                
+        #print '===>', pivot, k 
+        if (pivot == k):
+            return nums[k]
+            
+        if (pivot > k):
+            return self.quickSelect(nums,k,st,pivot)
+        if (pivot < k):
+            return self.quickSelect(nums,k,pivot+1,ed)
+    
+    # Somehow this super straightforward way is accepted by Leetcode and the performance is much better than QuickSelect above    
+    def straightforwardSort(self, nums, k):
+        """
+        :type nums: List[int]
+        :type k: int
+        :rtype: int
+        """
+        
+        if (not nums):
+            return -1
+            
+        #nums.sort(reverse=True)
+        nums.sort()
+        
+        #return nums[k-1]
+        return nums[-k]
+
+        
+    def findKthLargest(self, nums, k):
+        """
+        :type nums: List[int]
+        :type k: int
+        :rtype: int
+        """
+        
+        # I want to try this using quict select method which is the application of quick sort to searching
+        # note that sort algorithms can be adapted to search algorithm like binary search
+        # in this case it's quick sort to quick select
+        
+        # the idea is to choose a pivot put > pivot to its left and < pivot to its right
+        # and then see if the pivot is the kth element of the array if so return pivot
+        # if not repeat the process to the left hald or right half depending on whether
+        # the kth element is at the left or right of the pivot
+        
+        return self.quickSelect(nums, k-1, 0, len(nums))
+        
